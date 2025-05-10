@@ -14,3 +14,7 @@ class AsynchronousPredictResponse(BaseModel):
 class PredictionResponse(BaseModel):
     prediction_id: str
     output: SynchronousPredictionResponse
+
+class QueuePredictionRequest(BaseModel):
+    prediction_id: str
+    input: str

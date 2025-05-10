@@ -1,14 +1,22 @@
-from app.models import SynchronousPredictionResponse, PredictionResponse
+from app.models import SynchronousPredictionResponse, QueuePredictionRequest
+from app.services.queue_service import QueueService
 from app.core.predictor import mock_model_predict
 import uuid
 
+queue_service = QueueService()
+
 class PredictionService:
     """Service to handle Predictions"""
+    _instance = None
 
-    def __init__(self):
-        # temporary storage
-        self.async_prediction_map: dict[str, SynchronousPredictionResponse] = {}
-        self.currently_processing: set[str] = set()
+    # Singleton instance to use same attributes on all threads
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            # temporary memory
+            cls._instance.async_prediction_map = {}
+            cls._instance.currently_processing = set()
+        return cls._instance
 
     def predict_sync(self, input_text: str) -> SynchronousPredictionResponse:
         """
@@ -25,7 +33,13 @@ class PredictionService:
         id = str(uuid.uuid4())
         self.currently_processing.add(id)
 
+        request = QueuePredictionRequest(
+            prediction_id=id,
+            input=input_text
+        )
+
         #call to rabbitMQ
+        queue_service.publish_prediction(request)
 
         return id
     

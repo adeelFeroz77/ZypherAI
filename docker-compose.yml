@@ -1,0 +1,21 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672" #default port MQ
+      - "15672:15672" #management interface port
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+      - "5678:5678" # using this as debug port
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+     

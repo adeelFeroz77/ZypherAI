@@ -12,4 +12,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD [ "python", "-m", "app.main" ]
+CMD [ "python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "-m", "app.main" ]
