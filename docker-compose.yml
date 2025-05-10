@@ -17,5 +17,5 @@ services:
       - "5678:5678" # using this as debug port
     depends_on:
       rabbitmq:
-        condition: service_healthy
+        condition: service_healthy # using this to up rabbitmq service first
      

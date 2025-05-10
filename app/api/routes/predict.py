@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Header
 from app.services.prediction_service import PredictionService
 from app.models import SynchronousPredictionResponse, PredictionRequest, AsynchronousPredictResponse, PredictionResponse
+from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="/api")
 prediction_service = PredictionService()
@@ -21,7 +22,10 @@ def predict(
         message = "Request received. Processing asynchronously.",
         prediction_id= prediction_id
     )
-    return response
+    return JSONResponse(
+        status_code=202,
+        content=response.model_dump()
+    )
 
 @router.get("/predict/{prediction_id}", response_model=PredictionResponse)
 def get_prediction(prediction_id: str):

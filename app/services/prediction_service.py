@@ -29,8 +29,9 @@ class PredictionService:
         """
             Function to execute Asynchronous Prediction
         """
-
+        # a unique id
         id = str(uuid.uuid4())
+        # adding generated id in processing queue before instant return
         self.currently_processing.add(id)
 
         request = QueuePredictionRequest(
@@ -67,4 +68,5 @@ class PredictionService:
         """
 
         self.async_prediction_map[prediction_id] = result
+        #remove from in_process queue
         self.currently_processing.discard(prediction_id)
